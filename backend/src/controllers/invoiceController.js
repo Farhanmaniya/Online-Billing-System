@@ -1,4 +1,6 @@
 const Invoice = require('../models/Invoice');
+const eventDispatcher = require('../events/eventDispatcher');
+const { INVOICE_CREATED, INVOICE_STATUS_CHANGED } = require('../events/eventTypes');
 
 // @desc    Create a new invoice
 // @route   POST /api/invoices
@@ -39,6 +41,11 @@ exports.createInvoice = async (req, res) => {
     });
 
     const createdInvoice = await invoice.save();
+
+    // Emit event: INVOICE_CREATED
+    // Payload includes invoice details and user info
+    eventDispatcher.dispatch(INVOICE_CREATED, createdInvoice);
+
     res.status(201).json(createdInvoice);
   } catch (error) {
     console.error('Error creating invoice:', error);
@@ -110,6 +117,10 @@ exports.updateInvoiceStatus = async (req, res) => {
 
     invoice.status = status;
     const updatedInvoice = await invoice.save();
+
+    // Emit event: INVOICE_STATUS_CHANGED
+    eventDispatcher.dispatch(INVOICE_STATUS_CHANGED, updatedInvoice);
+
     res.json(updatedInvoice);
   } catch (error) {
     console.error('Error updating invoice status:', error);
