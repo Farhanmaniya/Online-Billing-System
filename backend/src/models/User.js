@@ -14,6 +14,27 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true
+    },
+    isVerified: {
+      type: Boolean,
+      default: false
+    },
+    verificationCode: {
+      type: String,
+      select: false // Hide from default queries
+    },
+    verificationCodeExpires: {
+      type: Date,
+      select: false
+    },
+    verificationAttempts: {
+      type: Number,
+      default: 0,
+      select: false
+    },
+    lockUntil: {
+      type: Date,
+      select: false
     }
   },
   { timestamps: true }

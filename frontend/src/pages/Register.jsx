@@ -28,8 +28,8 @@ const Register = () => {
       });
       
       console.log('Registration successful:', response.data);
-      // Redirect to login page after successful registration
-      navigate('/login');
+      // Redirect to verification page
+      navigate('/verify-email', { state: { email: email } });
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.response?.data?.message || 'Registration failed. Please try again.');

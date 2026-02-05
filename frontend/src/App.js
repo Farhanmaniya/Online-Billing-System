@@ -2,13 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import VerifyEmail from './pages/VerifyEmail';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Customers from './pages/Customers/Customers';
 import Products from './pages/Products/Products';
 import Invoices from './pages/Invoices/Invoices';
 import CreateInvoice from './pages/Invoices/CreateInvoice';
 import InvoiceDetail from './pages/Invoices/InvoiceDetail';
-import Notifications from './pages/Notifications/Notifications';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -20,6 +20,7 @@ const App = () => {
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
@@ -29,7 +30,6 @@ const App = () => {
             <Route path="/invoices/create" element={<CreateInvoice />} />
             <Route path="/invoices/:id" element={<InvoiceDetail />} />
             <Route path="/invoices" element={<Invoices />} />
-            <Route path="/notifications" element={<Notifications />} />
           </Route>
 
           {/* Default Redirect */}

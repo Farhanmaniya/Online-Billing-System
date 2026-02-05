@@ -9,7 +9,8 @@ const handleInvoiceStatusChanged = async (invoice) => {
   try {
     console.log(`[Listener] Processing INVOICE_STATUS_CHANGED for ${invoice._id}. Status: ${invoice.status}`);
 
-    // 1. Create In-App Notification
+    // 1. Create In-App Notification (DISABLED)
+    /*
     let type = 'info';
     if (invoice.status === 'Paid') type = 'success';
     if (invoice.status === 'Overdue') type = 'warning';
@@ -23,6 +24,7 @@ const handleInvoiceStatusChanged = async (invoice) => {
       'Invoice',
       invoice._id
     );
+    */
 
     // 2. (Optional) Send Email for critical status changes (e.g., Overdue)
     if (invoice.status === 'Overdue') {
