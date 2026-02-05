@@ -3,6 +3,8 @@ const emailService = require('../../services/emailService');
 const invoiceCreatedTemplate = require('../../emails/templates/invoiceCreated');
 const Customer = require('../../models/Customer');
 
+const User = require('../../models/User');
+
 /**
  * Handle INVOICE_CREATED event
  * @param {Object} invoice - The invoice payload
@@ -11,10 +13,25 @@ const handleInvoiceCreated = async (invoice) => {
   try {
     console.log(`[Listener] Processing INVOICE_CREATED for ${invoice._id}`);
 
-    // 1. Fetch Customer Email
+    // 1. Fetch Customer Email & User Details
     let recipientEmail = 'customer@example.com';
     let customerName = 'Customer';
+    let replyToEmail = null;
+    let senderName = 'Online Billing System';
     
+    // Fetch User (Sender) Details
+    if (invoice.userId) {
+        try {
+            const user = await User.findById(invoice.userId);
+            if (user) {
+                senderName = user.name || 'Online Billing System';
+                replyToEmail = user.email;
+            }
+        } catch (err) {
+            console.error('[Listener] Error fetching user:', err);
+        }
+    }
+
     if (invoice.customer) {
         try {
             const customer = await Customer.findById(invoice.customer);
@@ -35,7 +52,9 @@ const handleInvoiceCreated = async (invoice) => {
         const emailResult = await emailService.sendMail(
             recipientEmail,
             `New Invoice #${invoice.invoiceNumber || invoice._id}`,
-            emailHtml
+            emailHtml,
+            replyToEmail, // replyTo
+            `${senderName} (via System)` // fromName
         );
         if (emailResult) {
             emailSuccess = true;

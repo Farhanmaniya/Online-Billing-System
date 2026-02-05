@@ -17,17 +17,25 @@ class EmailService {
    * @param {string} to - Recipient email
    * @param {string} subject - Email subject
    * @param {string} htmlContent - HTML content
+   * @param {string} [replyTo] - Optional Reply-To address
+   * @param {string} [fromName] - Optional Display Name for the sender
    */
-  async sendMail(to, subject, htmlContent) {
+  async sendMail(to, subject, htmlContent, replyTo = null, fromName = "Online Billing System") {
     try {
       console.log(`[EmailService] Attempting to send email to: ${to}`);
       
-      const info = await this.transporter.sendMail({
-        from: `"Online Billing System" <${process.env.SMTP_USER}>`,
+      const mailOptions = {
+        from: `"${fromName}" <${process.env.SMTP_USER}>`,
         to: to,
         subject: subject,
         html: htmlContent,
-      });
+      };
+
+      if (replyTo) {
+        mailOptions.replyTo = replyTo;
+      }
+
+      const info = await this.transporter.sendMail(mailOptions);
 
       console.log(`[EmailService] Email sent successfully! Message ID: ${info.messageId}`);
       console.log(`[EmailService] Preview URL: ${nodemailer.getTestMessageUrl(info)}`);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import Navbar from '../../components/Navbar';
+import EmailStatus from '../../components/EmailStatus/EmailStatus';
 import styles from './CreateInvoice.module.css';
 
 const CreateInvoice = () => {
@@ -11,6 +12,7 @@ const CreateInvoice = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [emailStatus, setEmailStatus] = useState({ status: 'idle', message: '' });
 
   // Form State
   const [selectedCustomer, setSelectedCustomer] = useState('');
@@ -97,6 +99,9 @@ const CreateInvoice = () => {
       setSubmitting(true);
       setError(null);
       
+      // Show sending animation
+      setEmailStatus({ status: 'sending', message: 'Generating invoice and sending email...' });
+      
       const payload = {
         customer: selectedCustomer,
         date,
@@ -110,10 +115,17 @@ const CreateInvoice = () => {
       };
 
       await api.post('/invoices', payload);
-      navigate('/invoices'); // Redirect to invoices list (even if it doesn't exist yet, or dashboard)
+      
+      // Show success and redirect
+      setEmailStatus({ status: 'success', message: 'Invoice created and email sent!' });
+      setTimeout(() => {
+        navigate('/invoices');
+      }, 2000); // Wait 2 seconds before redirecting
+      
     } catch (err) {
       console.error('Error creating invoice:', err);
       setError(err.response?.data?.message || 'Failed to create invoice.');
+      setEmailStatus({ status: 'error', message: 'Failed to create invoice.' });
     } finally {
       setSubmitting(false);
     }
@@ -127,6 +139,7 @@ const CreateInvoice = () => {
     <>
       <Navbar />
       <div className={styles.container}>
+      <EmailStatus status={emailStatus.status} message={emailStatus.message} />
       <div className={styles.header}>
         <h2>Create New Invoice</h2>
       </div>
