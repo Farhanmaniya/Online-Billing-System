@@ -19,8 +19,9 @@ class EmailService {
    * @param {string} htmlContent - HTML content
    * @param {string} [replyTo] - Optional Reply-To address
    * @param {string} [fromName] - Optional Display Name for the sender
+   * @param {Array} [attachments] - Optional array of attachment objects {filename, path}
    */
-  async sendMail(to, subject, htmlContent, replyTo = null, fromName = "Online Billing System") {
+  async sendMail(to, subject, htmlContent, replyTo = null, fromName = "Online Billing System", attachments = []) {
     try {
       console.log(`[EmailService] Attempting to send email to: ${to}`);
       
@@ -29,6 +30,7 @@ class EmailService {
         to: to,
         subject: subject,
         html: htmlContent,
+        attachments: attachments,
       };
 
       if (replyTo) {

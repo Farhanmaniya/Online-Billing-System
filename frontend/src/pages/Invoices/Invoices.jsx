@@ -24,15 +24,49 @@ const Invoices = () => {
     fetchInvoices();
   }, []);
 
+  const exportToCSV = () => {
+    if (invoices.length === 0) return;
+
+    const headers = ['Invoice #', 'Date', 'Customer', 'Amount', 'Status'];
+    const rows = invoices.map(inv => [
+      inv.invoiceNumber,
+      new Date(inv.date).toLocaleDateString(),
+      inv.customer ? inv.customer.name : 'Unknown',
+      inv.total.toFixed(2),
+      inv.status
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(cell => `"${cell}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `invoices_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <Navbar />
       <div className={styles.container}>
         <div className={styles.header}>
           <h1>Invoices</h1>
-          <Link to="/invoices/create" className={styles.createBtn}>
-            + Create New Invoice
-          </Link>
+          <div className={styles.headerActions}>
+            {invoices.length > 0 && (
+              <button onClick={exportToCSV} className={styles.exportBtn}>
+                ⬇ Export CSV
+              </button>
+            )}
+            <Link to="/invoices/create" className={styles.createBtn}>
+              + Create New Invoice
+            </Link>
+          </div>
         </div>
 
         {loading && <div className={styles.loading}>Loading invoices...</div>}

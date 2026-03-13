@@ -5,58 +5,79 @@
 }
 
 .welcomeSection {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .welcomeSection h1 {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+  color: #1a202c;
+  margin-bottom: 0.35rem;
+  font-weight: 700;
 }
 
 .welcomeSection p {
-  color: #7f8c8d;
+  color: #718096;
+  font-size: 1rem;
+  margin: 0;
 }
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
   margin-bottom: 2rem;
 }
 
+/* ===== Stat Card ===== */
 .statCard {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  border: 1px solid #e2e8f0;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #ffffff;
+  padding: 1.5rem 1.75rem;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.06);
+  border: 1px solid #edf2f7;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
 }
 
-.statCard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+/* Colored left accent bar */
+.statCard::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 12px 0 0 12px;
+}
+
+.statCard:nth-child(1)::before { background: #4299e1; }
+.statCard:nth-child(2)::before { background: #48bb78; }
+.statCard:nth-child(3)::before { background: #ed8936; }
+.statCard:nth-child(4)::before { background: #9f7aea; }
+
+.cardIcon {
+  font-size: 2rem;
+  line-height: 1;
+  margin-bottom: 1rem;
+  display: inline-block;
+  padding: 0.5rem;
+  background: #f7fafc;
+  border-radius: 8px;
 }
 
 .cardTitle {
-  font-size: 0.875rem;
-  color: #7f8c8d;
+  font-size: 0.78rem;
+  color: #a0aec0;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
 }
 
 .cardValue {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-.cardIcon {
-  font-size: 1.5rem;
-  color: #3498db;
-  float: right;
-  opacity: 0.5;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2d3748;
+  line-height: 1.2;
 }

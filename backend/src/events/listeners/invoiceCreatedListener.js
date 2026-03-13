@@ -1,5 +1,6 @@
 const notificationService = require('../../services/notificationService');
 const emailService = require('../../services/emailService');
+const pdfService = require('../../services/pdfService');
 const invoiceCreatedTemplate = require('../../emails/templates/invoiceCreated');
 const Customer = require('../../models/Customer');
 
@@ -26,6 +27,7 @@ const handleInvoiceCreated = async (invoice) => {
             if (user) {
                 senderName = user.name || 'Online Billing System';
                 replyToEmail = user.email;
+                invoice.sender = user;
             }
         } catch (err) {
             console.error('[Listener] Error fetching user:', err);
@@ -35,32 +37,57 @@ const handleInvoiceCreated = async (invoice) => {
     if (invoice.customer) {
         try {
             const customer = await Customer.findById(invoice.customer);
-            if (customer && customer.email) {
-                recipientEmail = customer.email;
+            if (customer) {
+                if (customer.email) {
+                    recipientEmail = customer.email;
+                }
                 customerName = customer.name;
+                // Attach customer object to invoice for template
+                invoice.customer = customer;
             }
         } catch (err) {
             console.error('[Listener] Error fetching customer:', err);
         }
     }
 
-    // 2. Send Email FIRST
+    const frontendBaseUrl = process.env.FRONTEND_BASE_URL || 'http://localhost:3000';
+    invoice.payUrl = `${frontendBaseUrl}/pay/${invoice._id}`;
+
+    // 2. Generate PDF and Send Email
     const emailHtml = invoiceCreatedTemplate(invoice);
-    let emailSuccess = false;
     
+    // Generate PDF
+    let pdfPath = null;
+    try {
+        const result = await pdfService.generateInvoicePdf(emailHtml, invoice._id);
+        pdfPath = result.filePath;
+    } catch (pdfErr) {
+        console.error('[Listener] PDF generation failed:', pdfErr);
+        // Continue without PDF
+    }
+
+    let emailSuccess = false;
+    const attachments = pdfPath ? [{ filename: `Invoice-${invoice.invoiceNumber || invoice._id}.pdf`, path: pdfPath }] : [];
+
     try {
         const emailResult = await emailService.sendMail(
             recipientEmail,
             `New Invoice #${invoice.invoiceNumber || invoice._id}`,
             emailHtml,
             replyToEmail, // replyTo
-            `${senderName} (via System)` // fromName
+            `${senderName} (via System)`, // fromName
+            attachments
         );
         if (emailResult) {
             emailSuccess = true;
         }
     } catch (emailErr) {
         console.error('[Listener] Email sending failed:', emailErr);
+    }
+    
+    // Cleanup PDF
+    if (pdfPath) {
+        pdfService.deleteFile(pdfPath);
     }
 
     // 3. Create In-App Notification with Confirmation

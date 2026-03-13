@@ -42,10 +42,38 @@ const invoiceSchema = new mongoose.Schema({
     default: Date.now,
     required: true
   },
+  dueDate: {
+    type: Date
+  },
+  paymentTerms: {
+    type: String // e.g., "Net 30", "Due on Receipt"
+  },
   status: {
     type: String,
     enum: ['Unpaid', 'Paid', 'Overdue', 'Cancelled'],
     default: 'Unpaid'
+  },
+  // Recurring Billing
+  isRecurring: {
+    type: Boolean,
+    default: false
+  },
+  frequency: {
+    type: String,
+    enum: ['weekly', 'monthly', 'yearly'],
+    default: 'monthly'
+  },
+  nextBillingDate: {
+    type: Date
+  },
+  // Internationalization
+  currency: {
+    type: String,
+    default: 'INR' // e.g., INR, USD, EUR
+  },
+  taxType: {
+    type: String,
+    default: 'Standard', // e.g., GST, VAT, Standard
   },
   items: [invoiceItemSchema],
   subtotal: {

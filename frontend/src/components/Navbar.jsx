@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import api from '../services/api';
+import React from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.css';
 
 /**
@@ -10,7 +9,6 @@ import styles from './Navbar.module.css';
  */
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to logout?')) {
@@ -22,7 +20,7 @@ const Navbar = () => {
 
   return (
     <nav className={styles.navbar}>
-      <div className={styles.brand}>OBS</div>
+      <div className={styles.brand}>BillFlow</div>
       <div className={styles.navLinks}>
         <NavLink 
           to="/dashboard" 
@@ -47,6 +45,12 @@ const Navbar = () => {
           className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
         >
           Invoices
+        </NavLink>
+        <NavLink 
+          to="/settings" 
+          className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
+        >
+          Settings
         </NavLink>
         <button onClick={handleLogout} className={styles.logoutBtn}>
           Logout

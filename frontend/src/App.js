@@ -9,6 +9,8 @@ import Products from './pages/Products/Products';
 import Invoices from './pages/Invoices/Invoices';
 import CreateInvoice from './pages/Invoices/CreateInvoice';
 import InvoiceDetail from './pages/Invoices/InvoiceDetail';
+import Settings from './pages/Settings';
+import PaymentSimulation from './pages/Payment/PaymentSimulation';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -21,6 +23,8 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
+          {/* Public payment page linked from invoice emails */}
+          <Route path="/pay/:id" element={<PaymentSimulation />} />
           
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
@@ -30,6 +34,7 @@ const App = () => {
             <Route path="/invoices/create" element={<CreateInvoice />} />
             <Route path="/invoices/:id" element={<InvoiceDetail />} />
             <Route path="/invoices" element={<Invoices />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
 
           {/* Default Redirect */}

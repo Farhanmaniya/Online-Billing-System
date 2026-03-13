@@ -6,7 +6,9 @@ const ProductForm = ({ initialData, onSubmit, onCancel, isSubmitting }) => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
-    description: ''
+    description: '',
+    stockQuantity: 0,
+    lowStockThreshold: 5
   });
   
   const [errors, setErrors] = useState({});
@@ -16,7 +18,9 @@ const ProductForm = ({ initialData, onSubmit, onCancel, isSubmitting }) => {
       setFormData({
         name: initialData.name || '',
         price: initialData.price || '',
-        description: initialData.description || ''
+        description: initialData.description || '',
+        stockQuantity: initialData.stockQuantity ?? 0,
+        lowStockThreshold: initialData.lowStockThreshold ?? 5
       });
     }
   }, [initialData]);
@@ -111,7 +115,7 @@ const ProductForm = ({ initialData, onSubmit, onCancel, isSubmitting }) => {
           {errors.price && <span className={styles.error}>{errors.price}</span>}
         </div>
 
-        <div className={styles.formGroup}>
+        <div className={`${styles.formGroup} ${styles.fullWidth}`}>
           <label htmlFor="description" className={styles.label}>Description</label>
           <textarea
             id="description"
@@ -123,6 +127,36 @@ const ProductForm = ({ initialData, onSubmit, onCancel, isSubmitting }) => {
             disabled={isSubmitting}
           />
           {errors.description && <span className={styles.error}>{errors.description}</span>}
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="stockQuantity" className={styles.label}>Stock Quantity</label>
+          <input
+            type="number"
+            id="stockQuantity"
+            name="stockQuantity"
+            value={formData.stockQuantity}
+            onChange={handleChange}
+            className={styles.input}
+            placeholder="0"
+            min="0"
+            disabled={isSubmitting}
+          />
+        </div>
+
+        <div className={styles.formGroup}>
+          <label htmlFor="lowStockThreshold" className={styles.label}>Low Stock Alert (notify below)</label>
+          <input
+            type="number"
+            id="lowStockThreshold"
+            name="lowStockThreshold"
+            value={formData.lowStockThreshold}
+            onChange={handleChange}
+            className={styles.input}
+            placeholder="5"
+            min="0"
+            disabled={isSubmitting}
+          />
         </div>
 
         <div className={styles.formActions}>

@@ -13,28 +13,60 @@ const CreateInvoice = () => {
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [emailStatus, setEmailStatus] = useState({ status: 'idle', message: '' });
+  const [profileComplete, setProfileComplete] = useState(true);
 
   // Form State
   const [selectedCustomer, setSelectedCustomer] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [dueDate, setDueDate] = useState('');
+  const [paymentTerms, setPaymentTerms] = useState('Net 30');
   const [items, setItems] = useState([
     { productId: '', quantity: 1, price: 0, name: '' }
   ]);
   const [taxRate, setTaxRate] = useState(0);
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [frequency, setFrequency] = useState('monthly');
+  const [currency, setCurrency] = useState('INR');
+  const [taxType, setTaxType] = useState('Standard');
+
+  // Auto-calculate Due Date when Date or Terms change
+  useEffect(() => {
+    if (date && paymentTerms) {
+      const issueDate = new Date(date);
+      let daysToAdd = 0;
+      
+      if (paymentTerms === 'Net 7') daysToAdd = 7;
+      else if (paymentTerms === 'Net 15') daysToAdd = 15;
+      else if (paymentTerms === 'Net 30') daysToAdd = 30;
+      else if (paymentTerms === 'Net 60') daysToAdd = 60;
+      else if (paymentTerms === 'Due on Receipt') daysToAdd = 0;
+      
+      const newDueDate = new Date(issueDate);
+      newDueDate.setDate(newDueDate.getDate() + daysToAdd);
+      setDueDate(newDueDate.toISOString().split('T')[0]);
+    }
+  }, [date, paymentTerms]);
 
   // Fetch Data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [customersRes, productsRes] = await Promise.all([
+        const [customersRes, productsRes, profileRes] = await Promise.all([
           api.get('/customers'),
-          api.get('/products')
+          api.get('/products'),
+          api.get('/users/profile')
         ]);
         setCustomers(customersRes.data);
         setProducts(productsRes.data);
+        
+        // Check if profile is complete
+        const { companyName, businessAddress } = profileRes.data;
+        if (!companyName || !businessAddress) {
+          setProfileComplete(false);
+        }
       } catch (err) {
         console.error('Error fetching data:', err);
-        setError('Failed to load customers or products.');
+        setError('Failed to load customers, products, or profile.');
       } finally {
         setLoading(false);
       }
@@ -86,6 +118,10 @@ const CreateInvoice = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!profileComplete) {
+      setError('Please complete your business profile in Settings before creating invoices.');
+      return;
+    }
     if (!selectedCustomer) {
       setError('Please select a customer.');
       return;
@@ -105,13 +141,20 @@ const CreateInvoice = () => {
       const payload = {
         customer: selectedCustomer,
         date,
+        dueDate,
+        paymentTerms,
+        isRecurring,
+        frequency: isRecurring ? frequency : undefined,
+        currency,
+        taxType,
         items: items.map(item => ({
           product: item.productId,
           name: item.name,
           quantity: Number(item.quantity),
           price: Number(item.price)
         })),
-        tax: taxAmount
+        tax: taxAmount,
+        status: 'Unpaid'
       };
 
       await api.post('/invoices', payload);
@@ -139,8 +182,21 @@ const CreateInvoice = () => {
     <>
       <Navbar />
       <div className={styles.container}>
-      <EmailStatus status={emailStatus.status} message={emailStatus.message} />
-      <div className={styles.header}>
+        <EmailStatus status={emailStatus.status} message={emailStatus.message} />
+        
+        {!profileComplete && (
+          <div style={{ padding: '1rem', backgroundColor: '#fff3cd', color: '#856404', borderRadius: '4px', marginBottom: '1rem', border: '1px solid #ffeeba' }}>
+            <strong>Attention:</strong> Your business profile is incomplete. 
+            <button 
+              onClick={() => navigate('/settings')}
+              style={{ marginLeft: '1rem', background: 'none', border: 'none', color: '#856404', textDecoration: 'underline', cursor: 'pointer', padding: 0, fontSize: 'inherit' }}
+            >
+              Go to Settings to complete setup
+            </button>
+          </div>
+        )}
+
+        <div className={styles.header}>
         <h2>Create New Invoice</h2>
       </div>
 
@@ -182,7 +238,7 @@ const CreateInvoice = () => {
           <div className={styles.sectionHeader}>Invoice Details</div>
           <div className={styles.row}>
             <div className={styles.formGroup}>
-              <label>Date</label>
+              <label>Invoice Date</label>
               <input 
                 type="date" 
                 value={date} 
@@ -191,9 +247,76 @@ const CreateInvoice = () => {
               />
             </div>
             <div className={styles.formGroup}>
-              <label>Status</label>
-              <input type="text" value="Unpaid" readOnly />
+              <label>Payment Terms</label>
+              <select 
+                value={paymentTerms} 
+                onChange={(e) => setPaymentTerms(e.target.value)}
+              >
+                <option value="Due on Receipt">Due on Receipt</option>
+                <option value="Net 7">Net 7</option>
+                <option value="Net 15">Net 15</option>
+                <option value="Net 30">Net 30</option>
+                <option value="Net 60">Net 60</option>
+              </select>
             </div>
+            <div className={styles.formGroup}>
+              <label>Due Date</label>
+              <input 
+                type="date" 
+                value={dueDate} 
+                onChange={(e) => setDueDate(e.target.value)} 
+                required 
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Billing Options: Currency, Recurring, Tax Type */}
+        <div className={styles.section}>
+          <div className={styles.sectionHeader}>Billing Options</div>
+          <div className={styles.row}>
+            <div className={styles.formGroup}>
+              <label>Currency</label>
+              <select value={currency} onChange={e => setCurrency(e.target.value)}>
+                <option value="INR">₹ INR (Indian Rupee)</option>
+                <option value="USD">$ USD (US Dollar)</option>
+                <option value="EUR">€ EUR (Euro)</option>
+                <option value="GBP">£ GBP (British Pound)</option>
+              </select>
+            </div>
+            <div className={styles.formGroup}>
+              <label>Tax Type</label>
+              <select value={taxType} onChange={e => setTaxType(e.target.value)}>
+                <option value="Standard">Standard</option>
+                <option value="GST">GST (India)</option>
+                <option value="VAT">VAT (EU/UK)</option>
+                <option value="Sales Tax">Sales Tax (US)</option>
+                <option value="None">None</option>
+              </select>
+            </div>
+          </div>
+          <div className={styles.row}>
+            <div className={styles.formGroup}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={isRecurring}
+                  onChange={e => setIsRecurring(e.target.checked)}
+                  style={{ marginRight: '0.5rem' }}
+                />
+                Recurring Invoice
+              </label>
+            </div>
+            {isRecurring && (
+              <div className={styles.formGroup}>
+                <label>Billing Frequency</label>
+                <select value={frequency} onChange={e => setFrequency(e.target.value)}>
+                  <option value="weekly">Weekly</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+              </div>
+            )}
           </div>
         </div>
 
@@ -221,7 +344,9 @@ const CreateInvoice = () => {
                     >
                       <option value="">-- Select Product --</option>
                       {products.map(p => (
-                        <option key={p._id} value={p._id}>{p.name}</option>
+                        <option key={p._id} value={p._id}>
+                          {p.name} ({p.stockQuantity ?? 0} in stock)
+                        </option>
                       ))}
                     </select>
                   </td>

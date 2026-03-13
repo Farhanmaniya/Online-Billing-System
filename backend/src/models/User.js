@@ -35,6 +35,22 @@ const userSchema = new mongoose.Schema(
     lockUntil: {
       type: Date,
       select: false
+    },
+    companyName: {
+      type: String,
+      maxlength: 100
+    },
+    companyLogo: {
+      type: String // URL or path to the image
+    },
+    businessAddress: {
+      type: String
+    },
+    phoneNumber: {
+      type: String
+    },
+    taxId: {
+      type: String
     }
   },
   { timestamps: true }

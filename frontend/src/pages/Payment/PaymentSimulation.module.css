@@ -1,0 +1,201 @@
+/* ===== Page Layout ===== */
+.page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 2rem;
+  width: 100%;
+  max-width: 900px;
+}
+
+@media (max-width: 700px) {
+  .container { grid-template-columns: 1fr; }
+}
+
+/* ===== Invoice Summary Card ===== */
+.summary {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 1.8rem;
+  color: white;
+}
+
+.summary h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  opacity: 0.85;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding-bottom: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.45rem 0;
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.total {
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-bottom: none;
+  margin-top: 0.5rem;
+}
+
+/* ===== Payment Form Card ===== */
+.form {
+  background: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+.form h2 {
+  margin-top: 0;
+  color: #2c3e50;
+  font-size: 1.4rem;
+}
+
+/* ===== Method Selector ===== */
+.methodGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.methodBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.8rem 0.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #555;
+  transition: all 0.2s;
+}
+
+.methodBtn:hover { border-color: #764ba2; }
+
+.methodActive {
+  border-color: #764ba2;
+  background: #f5f0ff;
+  color: #764ba2;
+  font-weight: 600;
+}
+
+.methodIcon { font-size: 1.4rem; }
+
+/* ===== Inputs ===== */
+.inputs { display: flex; flex-direction: column; gap: 0.8rem; }
+
+.input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.input:focus { outline: none; border-color: #764ba2; }
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+.hint { margin: 0; font-size: 0.82rem; color: #888; }
+
+/* ===== Pay Button ===== */
+.payBtn {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.payBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.spinner::after {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid white;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error { color: #e74c3c; font-size: 0.88rem; margin: 0.5rem 0 0; }
+
+.secure { text-align: center; font-size: 0.78rem; color: #aaa; margin-top: 0.8rem; }
+
+/* ===== Success / Center ===== */
+.center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.successCard {
+  background: white;
+  border-radius: 16px;
+  padding: 3rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  max-width: 420px;
+  width: 90%;
+}
+
+.successIcon { font-size: 4rem; margin-bottom: 1rem; }
+
+.successCard h2 { color: #2c3e50; margin: 0 0 0.5rem; }
+.successCard p { color: #666; }
+
+.amount {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #27ae60;
+  margin: 1rem 0;
+}
+
+.doneBtn {
+  margin-top: 1rem;
+  padding: 0.8rem 2.5rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}

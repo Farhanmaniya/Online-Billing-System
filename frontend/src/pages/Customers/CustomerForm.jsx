@@ -118,7 +118,7 @@ const CustomerForm = ({ initialData, onSubmit, onCancel }) => {
           {errors.phone && <span className={styles.error}>{errors.phone}</span>}
         </div>
 
-        <div className={styles.formGroup}>
+        <div className={`${styles.formGroup} ${styles.fullWidth}`}>
           <label htmlFor="address" className={styles.label}>Address</label>
           <textarea
             id="address"

@@ -18,6 +18,16 @@ const productSchema = new mongoose.Schema(
       trim: true,
       maxlength: 255
     },
+    stockQuantity: {
+      type: Number,
+      default: 0,
+      min: 0
+    },
+    lowStockThreshold: {
+      type: Number,
+      default: 5,
+      min: 0
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
