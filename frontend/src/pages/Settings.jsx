@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import api, { BASE_URL } from '../services/api';
 import Navbar from '../components/Navbar';
 import styles from './Settings.module.css';
 
@@ -36,8 +35,7 @@ const Settings = () => {
       });
 
       if (companyLogo) {
-        // Assuming backend is on port 5000
-        setLogoPreview(`http://localhost:5000${companyLogo}`);
+        setLogoPreview(`${BASE_URL}${companyLogo}`);
       }
     } catch (err) {
       console.error('Error fetching profile:', err);

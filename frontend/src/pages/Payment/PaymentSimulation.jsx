@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
+import api, { BASE_URL } from '../../services/api';
 import styles from './PaymentSimulation.module.css';
-
-const BASE_URL = 'http://localhost:5000';
 
 const PAYMENT_METHODS = [
   { id: 'card', label: 'Credit / Debit Card', icon: '💳' },

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../../services/api';
+import api, { BASE_URL, API_URL } from '../../services/api';
 import Navbar from '../../components/Navbar';
 import styles from './InvoiceDetail.module.css';
 
@@ -39,7 +39,7 @@ const InvoiceDetail = () => {
     try {
       setLoading(true);
       if (isPublicPay) {
-        const res = await fetch(`http://localhost:5000/api/public/invoices/${id}`);
+        const res = await fetch(`${API_URL}/public/invoices/${id}`);
         if (!res.ok) {
           throw new Error('Failed to load public invoice');
         }
@@ -115,7 +115,7 @@ const InvoiceDetail = () => {
     try {
       setPaymentProcessing(true);
       if (isPublicPay) {
-        const res = await fetch(`http://localhost:5000/api/public/invoices/${id}/pay`, {
+        const res = await fetch(`${API_URL}/public/invoices/${id}/pay`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ const InvoiceDetail = () => {
 
   const { customer, items, subtotal, tax, total, invoiceNumber, date, status, userId } = invoice;
   const sender = userId || {};
-  const logoUrl = sender.companyLogo ? `http://localhost:5000${sender.companyLogo}` : null;
+  const logoUrl = sender.companyLogo ? `${BASE_URL}${sender.companyLogo}` : null;
 
   return (
     <>
