@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import api, { BASE_URL } from '../../services/api';
+import { BASE_URL } from '../../services/api';
+import axios from 'axios';
 import styles from './PaymentSimulation.module.css';
 
 const PAYMENT_METHODS = [
@@ -12,7 +13,6 @@ const PAYMENT_METHODS = [
 
 const PaymentSimulation = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
 
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -84,7 +84,7 @@ const PaymentSimulation = () => {
           <div className={styles.successIcon}>✅</div>
           <h2>Already Paid</h2>
           <p>This invoice has already been marked as paid.</p>
-          <button className={styles.doneBtn} onClick={() => navigate('/')}>Go to Dashboard</button>
+          <button className={styles.doneBtn} onClick={() => window.close()}>Close Window</button>
         </div>
       </div>
     );
@@ -105,7 +105,7 @@ const PaymentSimulation = () => {
           <h2>Payment Successful!</h2>
           <p>Invoice <strong>{invoice.invoiceNumber}</strong> has been marked as paid.</p>
           <p className={styles.amount}>₹{invoice.total.toFixed(2)}</p>
-          <button className={styles.doneBtn} onClick={() => navigate('/')}>Done</button>
+          <button className={styles.doneBtn} onClick={() => window.close()}>Close Window</button>
         </div>
       </motion.div>
     );

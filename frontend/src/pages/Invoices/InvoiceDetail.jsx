@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api, { BASE_URL, API_URL } from '../../services/api';
 import Navbar from '../../components/Navbar';
@@ -31,11 +31,7 @@ const InvoiceDetail = () => {
     last4: ''
   });
 
-  useEffect(() => {
-    fetchInvoice();
-  }, [id, isPublicPay, fetchInvoice]);
-
-  const fetchInvoice = async () => {
+  const fetchInvoice = useCallback(async () => {
     try {
       setLoading(true);
       if (isPublicPay) {
@@ -56,7 +52,11 @@ const InvoiceDetail = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, isPublicPay]);
+
+  useEffect(() => {
+    fetchInvoice();
+  }, [fetchInvoice]);
 
   const handleStatusToggle = async () => {
     if (!invoice) return;

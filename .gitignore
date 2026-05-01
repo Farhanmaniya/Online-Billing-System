@@ -30,3 +30,9 @@ build/
 # Editor directories
 .vscode/
 .idea/
+
+
+#Documentation
+Doc/
+*/Doc/
+**/*/Doc/

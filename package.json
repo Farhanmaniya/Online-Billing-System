@@ -1,0 +1,11 @@
+{
+  "name": "online-billing-system",
+  "version": "1.0.0",
+  "description": "Root package for running concurrently",
+  "scripts": {
+    "start": "npx concurrently \"npm run start:frontend\" \"npm run dev:backend\"",
+    "start:frontend": "cd frontend && npm start",
+    "dev:backend": "cd backend && npm run dev",
+    "install:all": "npx concurrently \"cd frontend && npm install\" \"cd backend && npm install\""
+  }
+}
